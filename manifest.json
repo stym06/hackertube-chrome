@@ -1,1 +1,35 @@
-{"manifest_version":3,"name":"HN for YouTube","version":"1.0.0","description":"Adds a HackerTube feed to YouTube’s topic pills.","host_permissions":["https://hackertube.org/*"],"background":{"service_worker":"background.js"},"content_scripts":[{"matches":["https://www.youtube.com/*"],"js":["content.js"],"css":["content.css"]}]}
+{
+  "manifest_version": 3,
+  "name": "HN for YouTube",
+  "version": "1.0.1",
+  "description": "Adds a HackerTube feed to YouTube\u2019s topic pills.",
+  "host_permissions": [
+    "https://hackertube.org/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "native-preview.js"
+      ],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ]
+    }
+  ]
+}

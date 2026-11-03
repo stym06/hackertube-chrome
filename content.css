@@ -37,3 +37,4 @@ html[dark].hn-active ytd-feed-filter-chip-bar-renderer yt-chip-cloud-chip-render
  background:#272727!important;color:#f1f1f1!important;box-shadow:none!important;
 }
 html.hn-active #hn-pill[aria-pressed=true]{background:#123f33!important;color:#a0ffe0!important;border-color:#64ffda!important;box-shadow:0 0 12px #35cfa080,inset 0 0 6px #35cfa020!important;font-weight:700}
+.hn-native-renderer{display:block;width:100%}.hn-card:not(.hn-has-native)>.hn-native-renderer{position:absolute;visibility:hidden;pointer-events:none}.hn-has-native>a:not(.hn-source),.hn-has-native>p{display:none!important}

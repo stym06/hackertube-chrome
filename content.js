@@ -24,19 +24,21 @@
         if(!/^[\w-]{11}$/.test(d.vid))continue;
         const card=el('article',null,'hn-card'), link=el('a');link.href=`https://www.youtube.com/watch?v=${d.vid}`;link.addEventListener('click',event=>{if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;event.preventDefault();event.stopPropagation();location.assign(link.href);});
         const thumb=el('div',null,'hn-thumb');const img=el('img');img.src=`https://i.ytimg.com/vi/${d.vid}/hqdefault.jpg`;img.alt='';img.loading='lazy';const seconds=Number(d.duration_s)||0;const duration=seconds>=3600?`${Math.floor(seconds/3600)}:${String(Math.floor(seconds/60)%60).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`:`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;thumb.append(img,el('span',duration,'hn-duration'));
-        let previewTimer, preview;
-        const stopPreview=()=>{clearTimeout(previewTimer);preview?.remove();preview=null;};
-        thumb.addEventListener('mouseenter',()=>{previewTimer=setTimeout(()=>{
-          if(!active)return;
-          preview=el('iframe',null,'hn-preview');
-          preview.src=`https://www.youtube.com/embed/${d.vid}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0`;
-          preview.title=`Preview: ${d.title||'Video'}`;preview.allow='autoplay; encrypted-media';preview.tabIndex=-1;
-          thumb.append(preview);
-        },650);});
-        thumb.addEventListener('mouseleave',stopPreview);
-        link.addEventListener('click',stopPreview);
-link.append(thumb,el('h3',d.title||'Untitled video'));card.append(link,el('p',d.channel||''),el('p',`${new Intl.NumberFormat('en',{notation:'compact'}).format(Number(d.views)||0)} views · ${d.hn?.recommenders||0} HN recommendations`));
-        const source=el('a','HN discussion ↗','hn-source');source.href=d.quote?.id?`https://news.ycombinator.com/item?id=${Number(d.quote.id)}`:`https://hackertube.org/watch/${d.vid}`;source.target='_blank';source.rel='noopener noreferrer';card.append(source);grid.append(card);
+        card.dataset.hnVideo=d.vid;
+        card.dataset.hnTitle=String(d.title||'Untitled video');
+        card.dataset.hnChannel=String(d.channel||'');
+        card.dataset.hnDuration=duration;
+        const views=`${new Intl.NumberFormat('en',{notation:'compact'}).format(Number(d.views)||0)} views`;
+        const published=new Date(d.published);
+        let posted='';
+        if(Number.isFinite(published.getTime())){
+          const days=Math.max(0,Math.floor((Date.now()-published.getTime())/86400000));
+          posted=days>=365?`${Math.floor(days/365)}y ago`:days>=30?`${Math.floor(days/30)}mo ago`:days>=7?`${Math.floor(days/7)}w ago`:days?`${days}d ago`:'Today';
+        }
+        card.dataset.hnViews=views;card.dataset.hnPosted=posted;
+
+link.append(thumb,el('h3',d.title||'Untitled video'));card.append(link,el('p',d.channel||''),el('p',[views,posted].filter(Boolean).join(' · ')));
+        const source=el('a','HN discussion ↗','hn-source');source.href=d.quote?.id?`https://news.ycombinator.com/item?id=${Number(d.quote.id)}`:`https://hackertube.org/watch/${d.vid}`;source.target='_blank';source.rel='noopener noreferrer';card.append(source);grid.append(card);card.dispatchEvent(new CustomEvent('hn-native-card',{bubbles:true}));
       }
       offset+=result.items.length;done=result.items.length===0;status.textContent=done?'You’re all caught up.':'';
     }catch(e){if(run===generation)status.textContent=`Couldn’t load videos. ${e.message}. Try again.`;}
